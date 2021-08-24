@@ -9,4 +9,9 @@ WORKDIR influx-cli
 
 RUN make
 
-ENTRYPOINT ["./bin/linux/influx"]
+RUN apt-get update && \
+    apt-get install jq -y
+
+ENV PATH="/go/influx-cli/bin/linux:$PATH"
+
+# ENTRYPOINT ["./bin/linux/influx"]
