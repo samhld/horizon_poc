@@ -84,8 +84,8 @@ services:
     depends_on:
       - influxd
     volumes:
-      - "${MQTT_DEMO_PATH}/average_temp_5m.flux:/average_temp_5m.flux"
-      - "${MQTT_DEMO_PATH}/cli_entrypoint.sh:/cli_entrypoint.sh"
+      - "${HORIZON_DEMO_PATH}/average_temp_5m.flux:/average_temp_5m.flux"
+      - "${HORIZON_DEMO_PATH}/cli_entrypoint.sh:/cli_entrypoint.sh"
     entrypoint: /cli_entrypoint.sh
 
   py_publisher:
