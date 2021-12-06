@@ -60,7 +60,7 @@ services:
       - influxd
 
   influx_setup:
-    image: influxdb:2.0.7
+    image: influxdb:latest
     # build: ./influx-cli
     container_name: influx_setup
     # env_file: .env
@@ -76,6 +76,7 @@ services:
         # - INFLUX_BUCKET=${INFLUX_BUCKET}
         # - INFLUX_TOKEN=${INFLUX_TOKEN}
         - DOCKER_INFLUX_HOST=${DOCKER_INFLUX_HOST}
+        - KAPACITOR_TOKEN=${KAPACITOR_TOKEN}
 
     deploy:
       restart_policy:
@@ -86,7 +87,24 @@ services:
     volumes:
       - "${HORIZON_DEMO_PATH}/average_temp_5m.flux:/average_temp_5m.flux"
       - "${HORIZON_DEMO_PATH}/cli_entrypoint.sh:/cli_entrypoint.sh"
-    entrypoint: /cli_entrypoint.sh
+    # entrypoint: /cli_entrypoint.sh
+    command: "/cli_entrypoint.sh"
+
+  kapacitor:
+    image: kapacitor:latest
+    container_name: kapacitor
+    depends_on:
+      - influxd
+    ports:
+      - "9092:9092"
+    volumes:
+      - "${HORIZON_DEMO_PATH}/kapacitor/kapacitor.conf:/etc/kapacitor/kapacitor.conf"
+    environment:
+        - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUX_USERNAME}
+        - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUX_PASSWORD}
+        - DOCKER_INFLUXDB_INIT_ORG=${INFLUX_ORG}
+        - DOCKER_INFLUXDB_INIT_BUCKET=mqtt
+        - KAPA_V2_TOKEN=${KAPA_V2_TOKEN}     
 
   py_publisher:
     build:
