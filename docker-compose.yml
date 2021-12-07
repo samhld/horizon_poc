@@ -118,3 +118,11 @@ services:
     depends_on:
         - broker
 
+  nats:
+    image: nats:latest
+    container_name: nats_broker
+    volumes:
+      - "${HORIZON_DEMO_PATH}/nats/nats.conf:/nats-server.conf"
+    ports:
+      - "2883:1883"
+
