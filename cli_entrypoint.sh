@@ -13,6 +13,12 @@ influx task create \
    --token ${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN} \
    -f /average_temp_5m.flux
 
+influx task create \
+--host http://influxd:8086 \
+   --org ${DOCKER_INFLUXDB_INIT_ORG} \
+   --token ${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN} \
+   -f /broadcast.flux
+
 export INFLUX_BUCKET_ID=$(curl --get http://influxd:8086/api/v2/buckets --header "Authorization: Token ${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}"  \
 --header "Content-type: application/json" \
 --data-urlencode "org=samhld" | jq .buckets | jq 'map(select(.name=="mqtt")) | .[].id' | tr -d '"')
