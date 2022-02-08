@@ -29,7 +29,8 @@ def on_connect(client, userdata, flags, rc):
     print(f"CONNACK received with code: {rc}")
     print("SUBSCRIBING to Topic: 'things/temp/average'")
     client.subscribe("things/temp/average", qos=1)
-    client.subscribe(f"processed/{client_name}/average")
+    print(f"SUBSCRIBING to Topic: 'processed/{client_name[:11]}/average'")
+    client.subscribe(f"processed/{client_name[:11]}/average", qos=1)
 
 def on_disconnect(client, userdata, rc):
     print(f"DISCONNECT code: {rc}")
