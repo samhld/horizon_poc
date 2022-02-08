@@ -27,5 +27,5 @@ echo ${number}
 echo ${interval}
 
 for ((i=0; i<number; i++)); do
-    docker run -d --rm --network mqtt-demo_default --name py-mqtt-client${i} python-mqtt-client /mqtt_client.py --interval ${interval} --format ${format} --broker ${broker}
+    docker run -d --rm --network horizon_default --name py-mqtt-client${i} python-mqtt-client /mqtt_client.py --interval ${interval} --format ${format} --broker ${broker}
 done

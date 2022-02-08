@@ -4,11 +4,12 @@ services:
   flux:
     build: ./flux
     container_name: flux
-    environment:
-      - INFLUXDB_URL=${DOCKER_INFLUX_HOST}
-      - INFLUXDB_TOKEN=${INFLUX_TOKEN}
-      - INFLUXDB_USERNAME=${INFLUX_USERNAME}
-      - INFLUXDB_ORG=${INFLUX_ORG}
+    # environment:
+    #   - INFLUXDB_URL=${DOCKER_INFLUX_HOST}
+    #   - INFLUXDB_TOKEN=${INFLUX_TOKEN}
+    #   - INFLUXDB_USERNAME=${INFLUX_USERNAME}
+    #   - INFLUXDB_ORG=${INFLUX_ORG}
+    env_file: .env
     volumes:
       - "${HORIZON_DEMO_PATH}/flux/query.flux:/go/flux/query.flux"
       - "${HORIZON_DEMO_PATH}/flux/query.flux:/go/flux/broadcast.flux"
@@ -18,13 +19,13 @@ services:
     container_name: ui
     ports:
       - "8888:8888"
-    # env_file: .env
-    environment:
-      - INFLUXDB_URL=${DOCKER_CHRONO_INFLUX_HOST}
-      - INFLUXDB_TOKEN=${INFLUX_TOKEN}
-      - INFLUXDB_USERNAME=${INFLUX_USERNAME}
-      - INFLUXDB_ORG=${INFLUX_ORG}
-      - LOG_LEVEL=${CHRONO_LOG_LEVEL}
+    env_file: .env
+    # environment:
+    #   - INFLUXDB_URL=${DOCKER_CHRONO_INFLUX_HOST}
+    #   - INFLUXDB_TOKEN=${INFLUX_TOKEN}
+    #   - INFLUXDB_USERNAME=${INFLUX_USERNAME}
+    #   - INFLUXDB_ORG=${INFLUX_ORG}
+    #   - LOG_LEVEL=${CHRONO_LOG_LEVEL}
 
   influxd:
     image: quay.io/influxdb/influxdb:nightly
@@ -49,10 +50,10 @@ services:
     depends_on:
       - influxd
       - broker
-    # env_file: .env
-    environment:
-      - INFLUX_ORG=${INFLUX_ORG}
-      - INFLUX_TOKEN=${INFLUX_TOKEN}
+    env_file: .env
+    # environment:
+    #   - INFLUX_ORG=${INFLUX_ORG}
+    #   - INFLUX_TOKEN=${INFLUX_TOKEN}
 
   cli:
     build: ./influx-cli
@@ -64,20 +65,20 @@ services:
     image: influxdb:latest
     # build: ./influx-cli
     container_name: influx_setup
-    # env_file: .env
-    environment:
-      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUX_USERNAME}
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUX_PASSWORD}
-      - DOCKER_INFLUXDB_INIT_ORG=${INFLUX_ORG}
-      - DOCKER_INFLUXDB_INIT_BUCKET=mqtt
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUX_TOKEN}
-      # - INFLUX_USERNAME=${INFLUX_USERNAME}
-      # - INFLUX_PASSWORD=${INFLUX_PASSWORD}
-      # - INFLUX_ORG=${INFLUX_ORG}
-      # - INFLUX_BUCKET=${INFLUX_BUCKET}
-      # - INFLUX_TOKEN=${INFLUX_TOKEN}
-      - DOCKER_INFLUX_HOST=${DOCKER_INFLUX_HOST}
-      - KAPACITOR_TOKEN=${KAPACITOR_TOKEN}
+    env_file: .env
+    # environment:
+    #   - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUX_USERNAME}
+    #   - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUX_PASSWORD}
+    #   - DOCKER_INFLUXDB_INIT_ORG=${INFLUX_ORG}
+    #   - DOCKER_INFLUXDB_INIT_BUCKET=mqtt
+    #   - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUX_TOKEN}
+    #   # - INFLUX_USERNAME=${INFLUX_USERNAME}
+    #   # - INFLUX_PASSWORD=${INFLUX_PASSWORD}
+    #   # - INFLUX_ORG=${INFLUX_ORG}
+    #   # - INFLUX_BUCKET=${INFLUX_BUCKET}
+    #   # - INFLUX_TOKEN=${INFLUX_TOKEN}
+    #   - DOCKER_INFLUX_HOST=${DOCKER_INFLUX_HOST}
+    #   - KAPACITOR_TOKEN=${KAPACITOR_TOKEN}
 
     deploy:
       restart_policy:
@@ -86,6 +87,7 @@ services:
     depends_on:
       - influxd
     volumes:
+      - "${HORIZON_DEMO_PATH}/flux/broadcast.flux:/broadcast.flux"
       - "${HORIZON_DEMO_PATH}/average_temp_5m.flux:/average_temp_5m.flux"
       - "${HORIZON_DEMO_PATH}/cli_entrypoint.sh:/cli_entrypoint.sh"
     # entrypoint: /cli_entrypoint.sh
@@ -100,12 +102,13 @@ services:
       - "9092:9092"
     volumes:
       - "${HORIZON_DEMO_PATH}/kapacitor/kapacitor.conf:/etc/kapacitor/kapacitor.conf"
-    environment:
-      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUX_USERNAME}
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUX_PASSWORD}
-      - DOCKER_INFLUXDB_INIT_ORG=${INFLUX_ORG}
-      - DOCKER_INFLUXDB_INIT_BUCKET=mqtt
-      - KAPA_V2_TOKEN=${KAPA_V2_TOKEN}
+    env_file: .env
+    # environment:
+    #   - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUX_USERNAME}
+    #   - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUX_PASSWORD}
+    #   - DOCKER_INFLUXDB_INIT_ORG=${INFLUX_ORG}
+    #   - DOCKER_INFLUXDB_INIT_BUCKET=mqtt
+    #   - KAPA_V2_TOKEN=${KAPA_V2_TOKEN}
 
   py_publisher:
     build:
