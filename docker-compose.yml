@@ -54,6 +54,10 @@ services:
     # environment:
     #   - INFLUX_ORG=${INFLUX_ORG}
     #   - INFLUX_TOKEN=${INFLUX_TOKEN}
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
 
   cli:
     build: ./influx-cli

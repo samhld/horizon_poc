@@ -1,4 +1,5 @@
 import "experimental/mqtt"
+import "experimental"
 
 option v = {
     timeRangeStart: -5m,
